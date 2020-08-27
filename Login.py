@@ -1,6 +1,31 @@
 from tkinter import *
 
 
+def login_fail():
+    login_error = Toplevel(screen_login)
+    login_error.title("Login Error")
+    login_error.geometry("200x150")
+
+    Label(login_error, text="").pack()
+    Label(login_error, text="Incorrect Password").pack()
+    Label(login_error, text="Try Again").pack()
+    Label(login_error, text="").pack()
+
+    Button(login_error, text="OK", width=8, command=quit).pack()
+
+
+def login_success():
+    login_done = Toplevel(screen_login)
+    login_done.title("Login Success")
+    login_done.geometry("200x150")
+
+    Label(login_done, text="").pack()
+    Label(login_done, text="Success").pack()
+    Label(login_done, text="").pack()
+
+    Button(login_done, text="OK", width=8, command=quit).pack()
+
+
 def registering():
     username_info = username.get()
     email_info = email.get()
@@ -30,18 +55,9 @@ def logging():
     contents_list = [x for x in file_contents.split("\n")]
 
     if (username_info in contents_list) and (password_info in contents_list) and username_info!="" and password_info!="":
-        print("Login Success.")
+        login_success()
     else:
-        error = Tk()
-        error.title("Error")
-        error.geometry("200x150")
-
-        Label(error, text="").pack()
-        Label(error, text="Incorrect Password").pack()
-        Label(error, text="Try Again").pack()
-        Label(error, text="").pack()
-
-        Button(error, text="OK", width=8, command=quit).pack()
+        login_fail()
 
     user_file.close()
 
@@ -82,7 +98,7 @@ def for_register():
     phone_no_entry.pack()
 
     Label(screen_register, text="Password").pack()
-    password_entry = Entry(screen_register, textvariable=password, width=20)
+    password_entry = Entry(screen_register, textvariable=password, width=20, show="*")
     password_entry.pack()
 
     Label(screen_register, text="").pack()
@@ -90,6 +106,7 @@ def for_register():
 
 
 def for_login():
+    global screen_login
     global username
     global password
 
@@ -107,7 +124,7 @@ def for_login():
     username_entry.pack()
 
     Label(screen_login, text="Password").pack()
-    password_entry = Entry(screen_login, textvariable=password, width=20)
+    password_entry = Entry(screen_login, textvariable=password, width=20, show="*")
     password_entry.pack()
 
     Label(screen_login, text="").pack()
