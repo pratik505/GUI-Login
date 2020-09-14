@@ -1,9 +1,63 @@
-from tkinter import *
+from tkinter import Tk, Toplevel, Label, Button, Entry, mainloop, END, StringVar
+
+
+def destroy_registersuccess_messagebox():
+    register_done.destroy()
+    screen_register.destroy()
+
+
+def destroy_registerfail_messagebox():
+    register_error.destroy()
+
+
+def destroy_loginsuccess_messagebox():
+    login_done.destroy()
+    screen_login.destroy()
+
+
+def destroy_loginerror_messagebox():
+    login_error.destroy()
+
+
+def register_fail():
+    # Message box for failure of login.
+
+    global register_error
+
+    register_error = Toplevel(screen_register)
+    register_error.title("ERROR")
+    register_error.geometry("200x150")
+
+    Label(register_error, text="").pack()
+    Label(register_error, text="Username Already Exists").pack()
+    Label(register_error, text="").pack()
+
+    Button(register_error, text="OK", width=8, command=destroy_registerfail_messagebox).pack()
+
+
+def register_success():
+    # Message box for success in registering.
+
+    global register_done
+
+    register_done = Toplevel(screen_register)
+    register_done.title("REGISTERED")
+    register_done.geometry("200x150")
+
+    Label(register_done, text="").pack()
+    Label(register_done, text="Registration Success!!!").pack()
+    Label(register_done, text="").pack()
+
+    Button(register_done, text="OK", width=8, command=destroy_registersuccess_messagebox).pack()
 
 
 def login_fail():
+    # Message box for failure of login.
+
+    global login_error
+
     login_error = Toplevel(screen_login)
-    login_error.title("Login Error")
+    login_error.title("Error")
     login_error.geometry("200x150")
 
     Label(login_error, text="").pack()
@@ -11,33 +65,53 @@ def login_fail():
     Label(login_error, text="Try Again").pack()
     Label(login_error, text="").pack()
 
-    Button(login_error, text="OK", width=8, command=quit).pack()
+    Button(login_error, text="OK", width=8, command=destroy_loginerror_messagebox).pack()
 
 
 def login_success():
+    # Message for success of login.
+
+    global login_done
+
     login_done = Toplevel(screen_login)
-    login_done.title("Login Success")
+    login_done.title("Login Success!!!")
     login_done.geometry("200x150")
 
     Label(login_done, text="").pack()
     Label(login_done, text="Success").pack()
     Label(login_done, text="").pack()
 
-    Button(login_done, text="OK", width=8, command=quit).pack()
+    Button(login_done, text="OK", width=8, command=destroy_loginsuccess_messagebox).pack()
 
 
 def registering():
+    # Functioning for registering.
+
     username_info = username.get()
     email_info = email.get()
     phone_no_info = phone_no.get()
     password_info = password.get()
+    count1 = 0
 
-    user_file = open("users.txt", "a")
-    user_file.write(username_info + "\n")
-    user_file.write(email_info + "\n")
-    user_file.write(phone_no_info + "\n")
-    user_file.write(password_info + "\n")
-    user_file.close()
+    user_file = open("users.txt", "r")
+    for line in user_file:
+        userinfo_list = list(line.split())
+        if (username == "" or email_info == "" or phone_no_info == "" or password_info == "") or (userinfo_list[0] == username_info):
+            count1 += 1
+    user_file.close
+
+    if count1 == 0:
+        user_file = open("users.txt", "a")
+        user_file.write(username_info + "\t")
+        user_file.write(email_info + "\t")
+        user_file.write(phone_no_info + "\t")
+        user_file.write(password_info)
+        user_file.write("\n")
+        user_file.close
+        register_success()
+    else:
+        register_fail()
+    
 
     username_entry.delete(0, END)
     email_entry.delete(0, END)
@@ -46,23 +120,33 @@ def registering():
 
 
 def logging():
+    # Functioning for logging.
+
     username_info = username.get()
     password_info = password.get()
+    count2 = 0
 
     user_file = open("users.txt", "r")
+    for line in user_file:
+        contents_list = line.split()
+        if ((username_info=="") or (password_info=="")):
+            count2 += 1
+        elif ((username_info != contents_list[0]) and (password_info != contents_list[3])):
+            count2 += 1
+        else:
+            count2 = 0
+    user_file.close()
 
-    file_contents = user_file.read()
-    contents_list = [x for x in file_contents.split("\n")]
-
-    if (username_info in contents_list) and (password_info in contents_list) and username_info!="" and password_info!="":
+    if count2 < 1:
         login_success()
     else:
         login_fail()
 
-    user_file.close()
-
 
 def for_register():
+    # Creating the Register interface.
+
+    global screen_register
     global username
     global email
     global phone_no
@@ -106,6 +190,8 @@ def for_register():
 
 
 def for_login():
+    # Creating the Login interface.
+
     global screen_login
     global username
     global password
@@ -132,6 +218,8 @@ def for_login():
 
 
 def main():
+    # Creating the initial interface.
+
     global root
     root = Tk()
     root.title("Student Management System")
